@@ -1,0 +1,16 @@
+TMP_FILE=$(mktemp /tmp/svcschema.XXXXXX) && \
+{ cat > $TMP_FILE <<-"EOF"
+schema:
+  types:
+    LoadBalancedServiceInput:
+      properties:
+        service_backends:
+          type: string
+          description: "Service name(s) that your service communicates with"
+          default: ""
+          minLength: 0
+          maxLength: 200
+EOF
+};
+yq -i eval-all 'select(fileIndex==0) * select(fileIndex==1)' \
+  lb-fargate-service/v2/schema/schema.yaml $TMP_FILE 
